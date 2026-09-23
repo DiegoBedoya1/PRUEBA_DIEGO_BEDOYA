@@ -6,7 +6,6 @@ import com.example.demo.Persistance.Crud.ProductoCrudRepository;
 import com.example.demo.Persistance.Entity.Producto;
 import com.example.demo.Persistance.Mapper.ProductoMapper;
 import com.example.demo.enums.TipoAlmacenamiento;import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;import java.util.List;
@@ -102,5 +101,15 @@ public class ProductoRepository implements ProductRepository {
     @Override
     public List<Product> showAllExpired(LocalDate fechaExpiracion){
         return mapper.toProducts(crud.findAllByFechaExpiracionBefore(fechaExpiracion));
+    }
+
+    @Override
+    public List<Product> showExpiringSoon(Long days){
+        if(days <= 0){
+            throw new RuntimeException("El dia no puede ser negativo o 0");
+        }
+        LocalDate hora = LocalDate.now().plusDays(days);
+        List<Producto> proximosExpirar = crud.findAllByFechaExpiracionBetween(LocalDate.now(),hora);
+        return mapper.toProducts(proximosExpirar);
     }
 }

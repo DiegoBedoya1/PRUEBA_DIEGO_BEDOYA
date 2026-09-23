@@ -41,4 +41,8 @@ public class ProductService {
     public List<Product> showAllExpired(LocalDate expirationDate){
         return repo.showAllExpired(expirationDate);
     }
+
+    public List<Product> showExpiringSoon(Long days){
+        return repo.showExpiringSoon(days);
+    }
 }

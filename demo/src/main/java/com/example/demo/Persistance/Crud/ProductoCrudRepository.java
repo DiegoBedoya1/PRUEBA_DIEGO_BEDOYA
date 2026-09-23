@@ -10,4 +10,5 @@ import java.util.List;
 public interface ProductoCrudRepository extends CrudRepository<Producto, Long> {
     List<Producto> findAllByTipoAlmacenamiento(TipoAlmacenamiento tipoAlmacenamiento);
     List<Producto> findAllByFechaExpiracionBefore(LocalDate fechaExpiracion);
+    List<Producto> findAllByFechaExpiracionBetween(LocalDate inicio, LocalDate fin);
 }

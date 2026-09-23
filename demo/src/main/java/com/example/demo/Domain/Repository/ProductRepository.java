@@ -12,4 +12,5 @@ public interface ProductRepository {
     Product update(Long id, Product product);
     Product delete(Long id);
     List<Product> showAllExpired(LocalDate expirationDate);
+    List<Product> showExpiringSoon(Long days);
 }

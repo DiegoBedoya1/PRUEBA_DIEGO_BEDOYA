@@ -3,6 +3,7 @@ package com.example.demo.web.Controller;
 import com.example.demo.Domain.DTO.Product;
 import com.example.demo.Domain.Service.ProductService;
 import com.example.demo.enums.TipoAlmacenamiento;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
+@SecurityRequirement(name = "bearerAuth")
 @AllArgsConstructor
 public class ProductController {
     private final ProductService service;
@@ -50,6 +52,11 @@ public class ProductController {
     @GetMapping("/all/expired")
     public ResponseEntity<List<Product>> showAllExpired(){
         return ResponseEntity.ok(service.showAllExpired(LocalDate.now()));
+    }
+
+    @GetMapping("/expiring-soon/{days}")
+    public ResponseEntity<List<Product>> showExpiringSoon(@PathVariable Long days){
+        return ResponseEntity.ok(service.showExpiringSoon(days));
     }
 
 }

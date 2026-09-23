@@ -13,6 +13,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,11 +33,39 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        // Público
+                        .requestMatchers(
+                                "/auth/login",
+                                "/users/new",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
+                        // Requiere token, cualquier rol
+                        .requestMatchers("/auth/me").authenticated()
+
+                        // Solo ADMIN
+                        .requestMatchers( "/products/new").hasRole("ADMIN")
+                        .requestMatchers( "/products/update/**").hasRole("ADMIN")
+                        .requestMatchers( "/products/delete/**").hasRole("ADMIN")
+                        .requestMatchers( "/products/all/expired").hasRole("ADMIN")
+
+                        // Solo USER
+                        .requestMatchers( "/sales/register").hasRole("USER")
+
+                        // ADMIN y USER
+                        .requestMatchers( "/products/all").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers( "/products/{id}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers( "/products/storage/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers( "/products/expiring-soon/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers( "/sales/**").hasAnyRole("ADMIN", "USER")
+
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -41,6 +74,19 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }
