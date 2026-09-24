@@ -5,7 +5,6 @@ import com.example.demo.Domain.Service.ProductService;
 import com.example.demo.enums.TipoAlmacenamiento;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

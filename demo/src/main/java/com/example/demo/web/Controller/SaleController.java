@@ -32,3 +32,4 @@ public class SaleController {
         return ResponseEntity.ok(service.showById(id));
     }
 }
+
