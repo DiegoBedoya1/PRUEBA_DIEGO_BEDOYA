@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:8090"
+    baseURL: "https://organic-goldfish-9777v7w45gv5375gp-8090.app.github.dev/"
 });
 
 api.interceptors.request.use((config) => {
@@ -13,3 +13,6 @@ api.interceptors.request.use((config) => {
 });
 
 export default api;
+
+
+

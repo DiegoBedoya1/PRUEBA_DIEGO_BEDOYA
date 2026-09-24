@@ -1,10 +1,15 @@
 import {createContext, useContext, useEffect, useState} from "react";
-import api from "../api/client";
+import api from "../api/client.ts";
 
 const AuthContext = createContext(null);
-
+type User = {
+    id: number;
+    name: string;
+    mail: string;
+    role: "ADMIN" | "USER";
+}
 export default function AuthProvider({children}){
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
     const[loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -21,7 +26,7 @@ export default function AuthProvider({children}){
             })
             .finally(() => setLoading(false));
     },[]);
-    const login = async (mail,password) => {
+    const login = async (mail: string ,password: string) => {
         const {data} = await api.post("/auth/login", {mail, password});
         localStorage.setItem("token", data.token);
 
